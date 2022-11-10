@@ -11,9 +11,15 @@ public:
     AnalyzerSettings();
     virtual ~AnalyzerSettings();
 
-    //Implement
+    //Implement  工具
+
+    // 从接口中获取设置，验证它们，并将它们保存到本地设置变量中
     virtual bool SetSettingsFromInterfaces() = 0;//Get the settings out of the interfaces, validate them, and save them to your local settings vars.
+
+    // 从提供的字符串加载设置
     virtual void LoadSettings(const char *settings) = 0;    //Load your settings from the provided string
+
+    // 将设置保存为字符串并返回。(使用SetSettingsString，返回GetSettingsString)
     virtual const char *SaveSettings() = 0;  //Save your settings to a string and return it. (use SetSettingsString, return GetSettingsString)
     virtual const char *GetSettingBrief();
 

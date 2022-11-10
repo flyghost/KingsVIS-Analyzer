@@ -18,26 +18,31 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
         mUseAutobaud(false),
         mSerialMode(SerialAnalyzerEnums::Normal)
 {
+    // 通道接口初始化
     mInputChannelInterface.reset(new AnalyzerSettingInterfaceChannel());
-    mInputChannelInterface->SetTitleAndTooltip(CHANNEL_NAME, "Standard Async Serial");
-    mInputChannelInterface->SetChannel(mInputChannel);
+    mInputChannelInterface->SetTitleAndTooltip(CHANNEL_NAME, "Standard Async Serial");      // 设置接口名和提示信息，鼠标移动到该接口会有提示信息
+    mInputChannelInterface->SetChannel(mInputChannel);  // 设置通道
 
+    // 波特率输入框
     mBitRateInterface.reset(new AnalyzerSettingInterfaceInteger());
-    mBitRateInterface->SetTitleAndTooltip("Bit Rate (Bits/s)",  "Specify the bit rate in bits per second.");
-    mBitRateInterface->SetMax(100000000);
-    mBitRateInterface->SetMin(1);
-    mBitRateInterface->SetInteger(mBitRate);
+    mBitRateInterface->SetTitleAndTooltip("Bit Rate (Bits/s)",  "Specify the bit rate in bits per second.");        // 提示信息
+    mBitRateInterface->SetMax(100000000);       // 输入框最大值
+    mBitRateInterface->SetMin(1);               // 输入框最小值
+    mBitRateInterface->SetInteger(mBitRate);    // 设置数值
 
+    // 是否自动波特率单选框
     mUseAutobaudInterface.reset(new AnalyzerSettingInterfaceBool());
     mUseAutobaudInterface->SetTitleAndTooltip("", "Automatically find the minimum pulse width and calculate the baud rate according to this pulse width.");
     mUseAutobaudInterface->SetCheckBoxText("Use Autobaud");
     mUseAutobaudInterface->SetValue(mUseAutobaud);
 
+    // 是否反向单选框
     mInvertedInterface.reset(new AnalyzerSettingInterfaceBool());
     mInvertedInterface->SetTitleAndTooltip("", "Specify if the serial signal is inverted");
     mInvertedInterface->SetCheckBoxText("Inverted (RS232)");
     mInvertedInterface->SetValue(mInverted);
 
+    // 创建接口（初始化）
     mBitsPerTransferInterface.reset(new AnalyzerSettingInterfaceNumberList());
     mBitsPerTransferInterface->SetTitleAndTooltip("", "Select the number of bits per frame");
     for (U32 i = 1; i <= 64; i++) {
@@ -55,7 +60,7 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
     }
     mBitsPerTransferInterface->SetNumber(mBitsPerTransfer);
 
-
+    // 停止位
     mStopBitsInterface.reset(new AnalyzerSettingInterfaceNumberList());
     mStopBitsInterface->SetTitleAndTooltip("", "Specify the number of stop bits.");
     mStopBitsInterface->AddNumber(1.0, "1 Stop Bit (Standard)", "");
@@ -63,7 +68,7 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
     mStopBitsInterface->AddNumber(2.0, "2 Stop Bits", "");
     mStopBitsInterface->SetNumber(mStopBits);
 
-
+    // 奇偶校验
     mParityInterface.reset(new AnalyzerSettingInterfaceNumberList());
     mParityInterface->SetTitleAndTooltip("", "Specify None, Even, or Odd Parity.");
     mParityInterface->AddNumber(AnalyzerEnums::None, "No Parity Bit (Standard)", "");
@@ -71,7 +76,7 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
     mParityInterface->AddNumber(AnalyzerEnums::Odd, "Odd Parity Bit", "");
     mParityInterface->SetNumber(mParity);
 
-
+    // 创建接口（初始化）
     mShiftOrderInterface.reset(new AnalyzerSettingInterfaceNumberList());
     mShiftOrderInterface->SetTitleAndTooltip("", "Select if the most significant bit or least significant bit is transmitted first");
     mShiftOrderInterface->AddNumber(AnalyzerEnums::LsbFirst, "Least Significant Bit Sent First (Standard)", "");
@@ -80,6 +85,7 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
 
     enum Mode { Normal, MpModeRightZeroMeansAddress, MpModeRightOneMeansAddress, MpModeLeftZeroMeansAddress, MpModeLeftOneMeansAddress };
 
+    // 创建接口（初始化）
     mSerialModeInterface.reset(new AnalyzerSettingInterfaceNumberList());
     mSerialModeInterface->SetTitleAndTooltip("Special Mode", "Specify if this is normal, or MP serial (aka multi-drop, MP, multi-processor, 9-bit serial)");
     mSerialModeInterface->AddNumber(SerialAnalyzerEnums::Normal, "None", "");

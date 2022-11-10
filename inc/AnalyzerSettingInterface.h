@@ -34,6 +34,8 @@ public:
     const char *GetToolTip();
     const char *GetTitle();
     bool IsDisabled();
+
+    // 设置接口名和提示信息
     void SetTitleAndTooltip(const char *title, const char *tooltip);
 
     //todo:  position, group, spacers, visual attributes
@@ -44,6 +46,7 @@ protected:
 };
 
 struct AnalyzerSettingInterfaceChannelData;
+// 数据通道接口
 class LOGICAPI AnalyzerSettingInterfaceChannel : public AnalyzerSettingInterface
 {
 public:
@@ -51,7 +54,10 @@ public:
     virtual ~AnalyzerSettingInterfaceChannel();
     virtual AnalyzerInterfaceTypeId GetType();
 
+    // 获取数据通道
     Channel GetChannel();
+
+    // 设置数据通道
     void SetChannel(const Channel &channel);
     bool GetSelectionOfNoneIsAllowed();
     void SetSelectionOfNoneIsAllowed(bool is_allowed);
@@ -61,6 +67,7 @@ protected:
 };
 
 struct AnalyzerSettingInterfaceNumberListData;
+// 下拉列表
 class LOGICAPI AnalyzerSettingInterfaceNumberList : public AnalyzerSettingInterface
 {
 public:
@@ -89,6 +96,7 @@ protected:
 };
 
 struct AnalyzerSettingInterfaceIntegerData;
+// 整数输入框
 class LOGICAPI AnalyzerSettingInterfaceInteger : public AnalyzerSettingInterface
 {
 public:
@@ -111,6 +119,7 @@ protected:
 };
 
 struct AnalyzerSettingInterfaceTextData;
+// 文本框
 class LOGICAPI AnalyzerSettingInterfaceText : public AnalyzerSettingInterface
 {
 public:
@@ -132,6 +141,7 @@ protected:
 };
 
 struct AnalyzerSettingInterfaceBoolData;
+// 单选框
 class LOGICAPI AnalyzerSettingInterfaceBool : public AnalyzerSettingInterface
 {
 public:
@@ -140,8 +150,12 @@ public:
     virtual AnalyzerInterfaceTypeId GetType();
 
     bool GetValue();
+
+    // 设置单选框是否选中
     void SetValue(bool value);
     const char *GetCheckBoxText();
+
+    // 设置单选框文本
     void SetCheckBoxText(const char *text);
 
 protected:
