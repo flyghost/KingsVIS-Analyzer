@@ -1,2 +1,5 @@
 SerialAnalyzer/vs2022/Release/*
 SerialAnalyzer/vs2022/.vs/*
+SdioAnalyzer/vs2022/.vs/*
+SdioAnalyzer/vs2022/Release/*
+SdioAnalyzer/vs2022/Debug/*
