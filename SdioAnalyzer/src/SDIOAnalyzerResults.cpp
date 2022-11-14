@@ -350,27 +350,40 @@ void SDIOAnalyzerResults::GenerateExportFile(const char *file, DisplayBase displ
     AnalyzerHelpers::EndFile(f);
 }
 
+/**
+ * 解析数据：用于右下角显示解析出来的格式.
+ * 
+ * \param frame_index
+ * \param display_base
+ */
 void SDIOAnalyzerResults::GenerateFrameTabularText(U64 frame_index, DisplayBase display_base)
 {
     ClearTabularText();
     Frame frame = GetFrame(frame_index);
 
     char number_str[128];
-    if (frame.mType == SDIOAnalyzer::FRAME_DIR) {
+    if (frame.mType == SDIOAnalyzer::FRAME_DIR) 
+    {
         if (frame.mData1) {
-            AddTabularText("DIR: Host");
+            AddTabularText("DIR: Host  ---> Slave");
         } else {
-            AddTabularText("DIR: Slave");
+            AddTabularText("DIR: Slave ---> Host");
         }
-    } else if (frame.mType == SDIOAnalyzer::FRAME_CMD) {
+    } 
+    else if (frame.mType == SDIOAnalyzer::FRAME_CMD) 
+    {
         AnalyzerHelpers::GetNumberString(frame.mData1, Decimal, 6, number_str, 128);
         std::string str = getCmdDescription((U8)frame.mData1);
         AddTabularText("CMD", number_str, ": ", str.c_str());
-    } else if (frame.mType == SDIOAnalyzer::FRAME_ACMD) {
+    } 
+    else if (frame.mType == SDIOAnalyzer::FRAME_ACMD) 
+    {
         AnalyzerHelpers::GetNumberString(frame.mData1, Decimal, 6, number_str, 128);
         std::string str = getAcmdDescription((U8)frame.mData1);
         AddTabularText("ACMD", number_str, ": ", str.c_str());
-    } else if (frame.mType == SDIOAnalyzer::FRAME_RESP) {
+    } 
+    else if (frame.mType == SDIOAnalyzer::FRAME_RESP) 
+    {
         AnalyzerHelpers::GetNumberString(frame.mData1, Decimal, 6, number_str, 128);
         if (frame.mFlags&0x80) { //ACMD的Response
             if ((frame.mFlags&0x3F) == 41) {
@@ -382,10 +395,14 @@ void SDIOAnalyzerResults::GenerateFrameTabularText(U64 frame_index, DisplayBase 
             std::string str = getCmdResponse((U8)frame.mFlags);
             AddTabularText(str.c_str(), "-", number_str);
         }
-    } else if (frame.mType == SDIOAnalyzer::FRAME_ARG) {
+    } 
+    else if (frame.mType == SDIOAnalyzer::FRAME_ARG) 
+    {
         AnalyzerHelpers::GetNumberString(frame.mData1, display_base, 32, number_str, 128);
         AddTabularText("ARG: ", number_str);
-    } else if (frame.mType == SDIOAnalyzer::FRAME_LONG_ARG) {
+    } 
+    else if (frame.mType == SDIOAnalyzer::FRAME_LONG_ARG) 
+    {
         if (display_base == Decimal) {
             AnalyzerHelpers::GetNumberString((frame.mData1>>32), Decimal, 32, number_str, 128);
             U32 strLen = strlen(number_str);
@@ -436,9 +453,9 @@ void SDIOAnalyzerResults::GenerateFrameTabularText(U64 frame_index, DisplayBase 
         AnalyzerHelpers::GetNumberString(frame.mData1, display_base, 8, number_str, 128);
         AddTabularText(number_str);
     } else if (frame.mType == SDIOAnalyzer::FRAME_START) {
-        AddTabularText("Start");
+        AddTabularText("---------- Start ----------");
     } else if (frame.mType == SDIOAnalyzer::FRAME_STOP) {
-        AddTabularText("End");
+        AddTabularText("----------  End  ----------");
     }
 }
 
@@ -454,6 +471,12 @@ void SDIOAnalyzerResults::GenerateTransactionTabularText(U64 transaction_id, Dis
     AddResultString("not supported");
 }
 
+/**
+ * 获取该CMD的名称.
+ * 
+ * \param index
+ * \return 
+ */
 std::string SDIOAnalyzerResults::getCmdDescription(U8 index)
 {
     if (index < commandsPacketCount) {

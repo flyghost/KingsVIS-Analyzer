@@ -632,12 +632,12 @@ U32 SDIOAnalyzer::GetMinimumSampleRateHz()
 
 const char *SDIOAnalyzer::GetAnalyzerName() const
 {
-    return "SDIO";
+    return "CreekWater-SDIO";
 }
 
 const char *GetAnalyzerName()
 {
-    return "SDIO";
+    return "CreekWater-SDIO";
 }
 
 Analyzer *CreateAnalyzer()
