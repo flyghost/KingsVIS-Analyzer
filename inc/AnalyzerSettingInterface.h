@@ -60,6 +60,8 @@ public:
     // 设置数据通道
     void SetChannel(const Channel &channel);
     bool GetSelectionOfNoneIsAllowed();
+
+    // 设置通道是否可以设置为None，这就表示“Enable”可以不与逻辑分析仪通道相连接
     void SetSelectionOfNoneIsAllowed(bool is_allowed);
 
 protected:

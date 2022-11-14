@@ -18,15 +18,15 @@ public:
     virtual const char *SaveSettings();
 
 
-    Channel mClockChannel;
-    Channel mCmdChannel;
-    Channel mDAT0Channel;
-    Channel mDAT1Channel;
-    Channel mDAT2Channel;
-    Channel mDAT3Channel;
-    bool mDoNotGenerateDatFrames;
-    bool mDoNotGenerateStartFrames;
-    enum SampleEdge mSampleRead;
+    Channel mClockChannel;      // 时钟通道
+    Channel mCmdChannel;        // 命令通道
+    Channel mDAT0Channel;       // DATA0
+    Channel mDAT1Channel;       // DATA1
+    Channel mDAT2Channel;       // DATA2
+    Channel mDAT3Channel;       // DATA3
+    bool mDoNotGenerateDatFrames;       // 不解析 DATA0~DATA3 数据
+    bool mDoNotGenerateStartFrames;     // 不解析 Start 和 End 字符串
+    enum SampleEdge mSampleRead;        // 采样边沿：上升沿 or 下降沿
 
 protected:
     std::auto_ptr< AnalyzerSettingInterfaceChannel >    mClockChannelInterface;

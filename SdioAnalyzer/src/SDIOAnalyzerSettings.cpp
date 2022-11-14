@@ -12,6 +12,7 @@ SDIOAnalyzerSettings::SDIOAnalyzerSettings()
       mDoNotGenerateStartFrames(false),
       mSampleRead(RISING_EDGE)
 {
+    // 初始化接口通道
     mClockChannelInterface.reset(new AnalyzerSettingInterfaceChannel());
     mCmdChannelInterface.reset(new AnalyzerSettingInterfaceChannel());
     mDAT0ChannelInterface.reset(new AnalyzerSettingInterfaceChannel());
@@ -19,7 +20,7 @@ SDIOAnalyzerSettings::SDIOAnalyzerSettings()
     mDAT2ChannelInterface.reset(new AnalyzerSettingInterfaceChannel());
     mDAT3ChannelInterface.reset(new AnalyzerSettingInterfaceChannel());
 
-
+    // 设置接口名和提示信息
     mClockChannelInterface->SetTitleAndTooltip("Clock", "Standard SDIO");
     mCmdChannelInterface->SetTitleAndTooltip("Command", "Standard SDIO");
     mDAT0ChannelInterface->SetTitleAndTooltip("DAT0", "Standard SDIO");
@@ -27,12 +28,14 @@ SDIOAnalyzerSettings::SDIOAnalyzerSettings()
     mDAT2ChannelInterface->SetTitleAndTooltip("DAT2", "Standard SDIO");
     mDAT3ChannelInterface->SetTitleAndTooltip("DAT3", "Standard SDIO");
 
+    // 下拉菜单：选择上升沿还是下降沿采样
     mSampleReadInterface.reset(new AnalyzerSettingInterfaceNumberList());
     mSampleReadInterface->SetTitleAndTooltip("Sample On", "Determines if sample on rising or falling edge");
     mSampleReadInterface->AddNumber(FALLING_EDGE, "Read Samples on Falling clock edge", "Read Samples on Falling clock edge");
     mSampleReadInterface->AddNumber(RISING_EDGE, "Read Samples on Rising clock edge", "Read Samples on Rising clock edge");
     mSampleReadInterface->SetNumber(mSampleRead);
 
+    // 设置数据通道
     mClockChannelInterface->SetChannel(mClockChannel);
     mCmdChannelInterface->SetChannel(mCmdChannel);
     mDAT0ChannelInterface->SetChannel(mDAT0Channel);
@@ -40,6 +43,7 @@ SDIOAnalyzerSettings::SDIOAnalyzerSettings()
     mDAT2ChannelInterface->SetChannel(mDAT2Channel);
     mDAT3ChannelInterface->SetChannel(mDAT3Channel);
 
+    // 设置通道是否可以设置为None
     mClockChannelInterface->SetSelectionOfNoneIsAllowed(false);
     mCmdChannelInterface->SetSelectionOfNoneIsAllowed(false);
     mDAT0ChannelInterface->SetSelectionOfNoneIsAllowed(false);
@@ -47,16 +51,19 @@ SDIOAnalyzerSettings::SDIOAnalyzerSettings()
     mDAT2ChannelInterface->SetSelectionOfNoneIsAllowed(true);
     mDAT3ChannelInterface->SetSelectionOfNoneIsAllowed(true);
 
+    // 单选框，是否解析生成DATA0~DATA3的数据
     mDoNotGenerateDatFramesInterface.reset(new AnalyzerSettingInterfaceBool());
     mDoNotGenerateDatFramesInterface->SetTitleAndTooltip("", "Select this option to not generate frames on DAT0~DAT3.");
     mDoNotGenerateDatFramesInterface->SetCheckBoxText("Do Not Generate Frames on DAT0~DAT3");
     mDoNotGenerateDatFramesInterface->SetValue(mDoNotGenerateDatFrames);
 
+    // 单选框，是否解析生成Start和End数据
     mDoNotGenerateStartFramesInterface.reset(new AnalyzerSettingInterfaceBool());
     mDoNotGenerateStartFramesInterface->SetTitleAndTooltip("", "Select this option to not generate frames of Start/End.");
     mDoNotGenerateStartFramesInterface->SetCheckBoxText("Do Not Generate Frames of Start/End");
     mDoNotGenerateStartFramesInterface->SetValue(mDoNotGenerateStartFrames);
 
+    // 添加接口以供外部使用
     AddInterface(mClockChannelInterface.get());
     AddInterface(mCmdChannelInterface.get());
     AddInterface(mDAT0ChannelInterface.get());
