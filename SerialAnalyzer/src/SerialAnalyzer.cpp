@@ -52,6 +52,7 @@ void SerialAnalyzer::SetupResults()
     //Unlike the worker thread, this function is called from the GUI thread
     //we need to reset the Results object here because it is exposed for direct access by the GUI, and it can't be deleted from the WorkerThread
 
+    // 创建新建 AnalyzerResults 的派生类
     mResults.reset(new SerialAnalyzerResults(this, mSettings.get()));
     SetAnalyzerResults(mResults.get());
     mResults->AddChannelBubblesWillAppearOn(mSettings->mInputChannel);
@@ -59,7 +60,7 @@ void SerialAnalyzer::SetupResults()
 
 void SerialAnalyzer::WorkerThread()
 {
-    mSampleRateHz = GetSampleRate();
+    mSampleRateHz = GetSampleRate();    // 获取采样频率
     ComputeSampleOffsets();
     U32 num_bits = mSettings->mBitsPerTransfer;
 
@@ -82,6 +83,7 @@ void SerialAnalyzer::WorkerThread()
         mask <<= 1;
     }
 
+    // 要访问采样数据，还需每个通道数据 AnalyzerChannelData 的指针，异步串行协议只需一个。
     mSerial = GetAnalyzerChannelData(mSettings->mInputChannel);
     mSerial->TrackMinimumPulseWidth();
     if (mSerial->GetBitState() == mBitLow) {
@@ -283,6 +285,13 @@ U32 SerialAnalyzer::GenerateSimulationData(U64 minimum_sample_index, U32 device_
     return mSimulationDataGenerator.GenerateSimulationData(minimum_sample_index, device_sample_rate, simulation_channels);
 }
 
+/**
+ * @brief 通过此函数设置在解析此协议时，要达到的最小采样率
+ * 
+ * 如果 Serial 波特率设置为 9600，则采集此信号时需要设置的最小采样率为 9600*4 = 38400Hz，设置比这个值更大的采样率将会更好
+ * 
+ * @return U32 
+ */
 U32 SerialAnalyzer::GetMinimumSampleRateHz()
 {
     return mSettings->mBitRate * 4;

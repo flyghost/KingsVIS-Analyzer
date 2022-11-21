@@ -2,23 +2,48 @@
 #include "SDIOAnalyzerSettings.h"
 #include <AnalyzerChannelData.h>
 
+/**
+ * @brief Construct a new SDIOAnalyzer::SDIOAnalyzer object
+ * 
+ * 构造函数
+ * 
+ * 
+ * 
+ */
 SDIOAnalyzer::SDIOAnalyzer()
     : Analyzer(),
+      // 会调用基类的构造函数，新构建了 AnalyzerSettings 的派生类，并且将基类作为指针提供给 AnalyzerSettings 的派生类
       mSettings(new SDIOAnalyzerSettings()),
       mSimulationInitilized(false)
 {
     SetAnalyzerSettings(mSettings.get());
 }
 
+/**
+ * @brief 这个函数中只需要调用 KillThread 函数即可
+ * 
+ */
 SDIOAnalyzer::~SDIOAnalyzer()
 {
     KillThread();
 }
 
+/**
+ * @brief 在该函数中需要生成 AnalyzerResults 派生类的实例对象，
+ * 同时要将该对象的指针保存到 Analyzer 派生类中，
+ * 并且要将需要显示解析结果的通道传递给 AnalyzerResults 的派生对象
+ * 
+ */
 void SDIOAnalyzer::SetupResults()
 {
+    // 创建新建 AnalyzerResults 的派生类
     mResults.reset(new SDIOAnalyzerResults(this, mSettings.get()));
+
+    // 需要将其指针提供给基类
     SetAnalyzerResults(mResults.get());
+
+    // 指定要显示结果的通道，通常只需一个通道（除了 SPI 的例子，MISO 和 MOSI 都需要显示）。
+    // 这里只需指定显示信息的通道，而其它（如显示 marker）不应在此指定
     mResults->AddChannelBubblesWillAppearOn(mSettings->mCmdChannel);
     if (!mSettings->mDoNotGenerateDatFrames) {
         mResults->AddChannelBubblesWillAppearOn(mSettings->mDAT0Channel);
@@ -27,6 +52,7 @@ void SDIOAnalyzer::SetupResults()
 
 void SDIOAnalyzer::WorkerThread()
 {
+    // 要访问采样数据，还需每个通道数据 AnalyzerChannelData 的指针，异步串行协议只需一个，而 SPI 则需要 4 个, SDIO有3个或者6个。
     mClock = GetAnalyzerChannelData(mSettings->mClockChannel);
     mCmd = GetAnalyzerChannelData(mSettings->mCmdChannel);
     mDAT0 = GetAnalyzerChannelData(mSettings->mDAT0Channel);
@@ -145,12 +171,14 @@ bool SDIOAnalyzer::FrameStateMachine()
                 mResults->AddMarker(smpMid, AnalyzerResults::DownArrow, mSettings->mClockChannel);
             }
             if (!mSettings->mDoNotGenerateStartFrames) {
-                Frame frame;
+                Frame frame;    // 首先我们创建了一个 Frame，然后对其赋值。若有的数值不需要，则可以跳过
                 frame.mType = FRAME_START;
-                frame.mFlags = 0;
+                frame.mFlags = 0;   // mFlags 应该先置为 0，然后等后续满足设置的判断条件时，再设置为相应的值
                 frame.mData1 = 0;
                 frame.mStartingSampleInclusive = cmdStartSmpNum;
                 frame.mEndingSampleInclusive = smpEnd - 1;
+
+                // 要保存 Frame，使用 AnalyzerResults 继承类中的 AddFrame，请注意 Frame 需要一个个按照顺序依次添加，而且不能重叠
                 mResults->AddFrame(frame);
             }
             startOfNextFrame = smpEnd;
@@ -534,14 +562,18 @@ bool SDIOAnalyzer::readDataLines()
     }
 
     if (!mSettings->mDoNotGenerateDatFrames) {
-        Frame frame;
+        Frame frame;// 首先我们创建了一个 Frame，然后对其赋值。若有的数值不需要，则可以跳过
         frame.mType = DATA;
-        frame.mFlags = 0;
+        frame.mFlags = 0;// mFlags 应该先置为 0，然后等后续满足设置的判断条件时，再设置为相应的值
         frame.mData1 = dataValue;
         frame.mStartingSampleInclusive = startSmp;
         frame.mEndingSampleInclusive = dataStartSmpNum - 1;
+
+        // 要保存 Frame，使用 AnalyzerResults 继承类中的 AddFrame，请注意 Frame 需要一个个按照顺序依次添加，而且不能重叠
         mResults->AddFrame(frame);
+        // 在添加 Frame 后，立即调用 CommitResults，这样外部系统可以立即访问 Frame
         mResults->CommitResults();
+        // 还要调用 ReportProgress，输入参数为已处理的最大采样数
         ReportProgress(frame.mEndingSampleInclusive);
     }
     if (dataNum == 514) { //CRC16
@@ -615,6 +647,16 @@ bool SDIOAnalyzer::NeedsRerun()
     return false;
 }
 
+/**
+ * @brief 
+ * 
+ * 本函数用于获取模拟数据，在此之前我们已经完成了一个专门用来生成模拟数据的类， 这里我们则需要对其进行调用
+ * 
+ * @param minimum_sample_index 
+ * @param device_sample_rate 
+ * @param simulation_channels 
+ * @return U32 
+ */
 U32 SDIOAnalyzer::GenerateSimulationData(U64 minimum_sample_index, U32 device_sample_rate, SimulationChannelDescriptor **simulation_channels)
 {
     if (mSimulationInitilized == false) {
@@ -625,26 +667,53 @@ U32 SDIOAnalyzer::GenerateSimulationData(U64 minimum_sample_index, U32 device_sa
     return mSimulationDataGenerator.GenerateSimulationData(minimum_sample_index, device_sample_rate, simulation_channels);
 }
 
+/**
+ * @brief 通过此函数设置在解析此协议时，要达到的最小采样率
+ * 
+ * 如果 Serial 波特率设置为 9600，则采集此信号时需要设置的最小采样率为 9600*4 = 38400Hz，设置比这个值更大的采样率将会更好
+ * 
+ * @return U32 
+ */
 U32 SDIOAnalyzer::GetMinimumSampleRateHz()
 {
     return 1000000;
 }
 
+/**
+ * @brief 返回在 KingstVIS 软件界面中显示的该协议解析器的名称
+ * 
+ * @return const char* 
+ */
 const char *SDIOAnalyzer::GetAnalyzerName() const
 {
     return "CreekWater-SDIO";
 }
 
+/**
+ * @brief 返回与前面函数相同的字符串
+ * 
+ * @return const char* 
+ */
 const char *GetAnalyzerName()
 {
     return "CreekWater-SDIO";
 }
 
+/**
+ * @brief 返回 Analyzer 派生类实例的指针
+ * 
+ * @return Analyzer* 
+ */
 Analyzer *CreateAnalyzer()
 {
     return new SDIOAnalyzer();
 }
 
+/**
+ * @brief 删除 Analyzer 指针
+ * 
+ * @param analyzer 
+ */
 void DestroyAnalyzer(Analyzer *analyzer)
 {
     delete analyzer;

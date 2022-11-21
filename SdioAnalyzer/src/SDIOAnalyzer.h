@@ -11,8 +11,9 @@ class SDIOAnalyzerSettings;
 class ANALYZER_EXPORT SDIOAnalyzer : public Analyzer
 {
 public:
-    SDIOAnalyzer();
-    virtual ~SDIOAnalyzer();
+    
+    SDIOAnalyzer();         // SDIO构造函数
+    virtual ~SDIOAnalyzer();// SDIO析构函数
     virtual void SetupResults();
     virtual void WorkerThread();
 

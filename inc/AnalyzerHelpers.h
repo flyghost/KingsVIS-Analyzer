@@ -6,12 +6,44 @@
 class LOGICAPI AnalyzerHelpers
 {
 public:
+    // 偶校验判断
     static bool IsEven(U64 value);
+
+    // 奇校验判断
     static bool IsOdd(U64 value);
+
+    // 获取数据位数
     static U32 GetOnesCount(U64 value);
+
+    // 获取两个数的差（a-b）
     static U32 Diff32(U32 a, U32 b);
 
+    /**
+     * @brief 将 number 转成指定格式的字符串
+     * 
+     * 根据实际可用的显示空间，显示信息可以是不同长度的字符串。应该生成多种结果字符串，
+     * 最简单的可能只需表示内容的类型（比如“D”代表数据），长些的可能会表示整个数据（比如“0xFF01”），
+     * 也可能会非常长（比如“Left Channel Audio Data: 0xFF01”）。
+     * 设置多个字符串是为了当软件显示解析结果时，对界面上的波形进行缩放后，会呈现出不同的解析信息，
+     * 当显示区域短时显示短的字符串，长的时候显示长的字符串
+     * 
+     * @param number 要转化的数
+     * @param display_base 要转换成的格式
+     * @param num_data_bits 数的实际位数
+     * @param result_string 转换成的字符串
+     * @param result_string_max_length 字符串的最大长度
+     */
     static void GetNumberString(U64 number, DisplayBase display_base, U32 num_data_bits, char *result_string, U32 result_string_max_length);
+    
+    /**
+     * @brief 将与结果相关联的时间转换成字符串
+     * 
+     * @param sample 当前的采样点数
+     * @param trigger_sample 为触发位置的采样点数
+     * @param sample_rate_hz 采样频率
+     * @param result_string 转换成的 字符串指针
+     * @param result_string_max_length 字符串的最大长度
+     */
     static void GetTimeString(U64 sample, U64 trigger_sample, U32 sample_rate_hz, char *result_string, U32 result_string_max_length);
 
     static void Assert(const char *message);
