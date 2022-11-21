@@ -31,8 +31,11 @@ typedef unsigned long long U64; /* 64 bit unsigned */
 #endif
 
 enum DisplayBase { Binary, Decimal, Hexadecimal, ASCII, AsciiHex };
+
+// 逻辑通道的状态
 enum BitState { BIT_LOW, BIT_HIGH };
 
+// 逻辑通道电平翻转
 #define Toggle(x) (x == BIT_LOW ? BIT_HIGH : BIT_LOW)
 #define Invert(x) (x == BIT_LOW ? BIT_HIGH : BIT_LOW)
 
@@ -40,6 +43,8 @@ enum BitState { BIT_LOW, BIT_HIGH };
 
 //Note this class can not add, remove or reorder member variables without breaking binary compatibilty
 //This function can add non-virtual functions as long as they are listed after existing functions.
+// 注意，该类不能在不破坏二进制兼容性的情况下添加、删除或重新排序成员变量
+// 这个函数可以添加非虚函数，只要它们列在现有函数之后。
 class LOGICAPI Channel
 {
 public:

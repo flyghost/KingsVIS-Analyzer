@@ -35,8 +35,29 @@ class LOGICAPI ClockGenerator
 public:
     ClockGenerator();
     ~ClockGenerator();
+
+    /**
+     * @brief 初始化
+     * 
+     * @param target_frequency 想要模拟数据的频率（单位 Hz），比如 Serail 协议的波特 率、SPI 时钟的波特率等
+     * @param sample_rate_hz 这个参数是生成数据的采样率，就是通过软件界面 上设置的采样率
+     */
     void Init(double target_frequency, U32 sample_rate_hz);
+
+    /**
+     * @brief 返回移动半个周期所需的采样点数，以半个周期为基本单位。例如，要移动一个 周期时需要输入 2.0
+     * 
+     * @param multiple 
+     * @return U32 
+     */
     U32 AdvanceByHalfPeriod(double multiple = 1.0);
+
+    /**
+     * @brief 返回移动 time_s 时间所需的采样点数，时间单位为秒，输入 1e-6 表示 1 微妙
+     * 
+     * @param time_s 
+     * @return U32 
+     */
     U32 AdvanceByTimeS(double time_s);
 
 protected:

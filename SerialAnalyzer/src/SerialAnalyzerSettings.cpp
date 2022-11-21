@@ -42,7 +42,7 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
     mInvertedInterface->SetCheckBoxText("Inverted (RS232)");
     mInvertedInterface->SetValue(mInverted);
 
-    // 创建接口（初始化）
+    // 下拉菜单
     mBitsPerTransferInterface.reset(new AnalyzerSettingInterfaceNumberList());
     mBitsPerTransferInterface->SetTitleAndTooltip("", "Select the number of bits per frame");
     for (U32 i = 1; i <= 64; i++) {
