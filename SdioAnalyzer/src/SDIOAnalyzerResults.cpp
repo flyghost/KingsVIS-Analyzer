@@ -121,9 +121,9 @@ void SDIOAnalyzerResults::GenerateBubbleText(U64 frame_index, Channel &channel, 
             AddResultString("D");
             AddResultString("DIR");
             if (frame.mData1) {
-                AddResultString("DIR: Host");
+                AddResultString("DIR: Host  ---> Slave");
             } else {
-                AddResultString("DIR: Slave");
+                AddResultString("DIR: Slave ---> Host");
             }
         } else if (frame.mType == SDIOAnalyzer::FRAME_CMD) {
             AddResultString("C");
@@ -212,10 +212,10 @@ void SDIOAnalyzerResults::GenerateBubbleText(U64 frame_index, Channel &channel, 
             AddResultString("CRC:", number_str);
         } else if (frame.mType == SDIOAnalyzer::FRAME_START) {
             AddResultString("S");
-            AddResultString("Start");
+            AddResultString("START");
         } else if (frame.mType == SDIOAnalyzer::FRAME_STOP) {
             AddResultString("E");
-            AddResultString("End");
+            AddResultString("END");
         }
     }
 }
@@ -453,9 +453,9 @@ void SDIOAnalyzerResults::GenerateFrameTabularText(U64 frame_index, DisplayBase 
         AnalyzerHelpers::GetNumberString(frame.mData1, display_base, 8, number_str, 128);
         AddTabularText(number_str);
     } else if (frame.mType == SDIOAnalyzer::FRAME_START) {
-        AddTabularText("---------- Start ----------");
+        AddTabularText("========== START ==========");
     } else if (frame.mType == SDIOAnalyzer::FRAME_STOP) {
-        AddTabularText("----------  End  ----------");
+        AddTabularText("==========  END  ==========");
     }
 }
 
