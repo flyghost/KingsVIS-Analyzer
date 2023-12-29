@@ -38,7 +38,7 @@ protected: //vars
     AnalyzerChannelData *mDAT3;
 
     SDIOSimulationDataGenerator mSimulationDataGenerator;
-    bool mSimulationInitilized;
+    bool mSimulationInitilized;     // 仿真是否已经初始化
 
 private:
     enum analyzerStep {FIND_CMD_START, FIND_DATA_START, READ_DATA, ANLY_CMD};

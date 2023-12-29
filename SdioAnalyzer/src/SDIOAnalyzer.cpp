@@ -14,9 +14,9 @@ SDIOAnalyzer::SDIOAnalyzer()
     : Analyzer(),
       // 会调用基类的构造函数，新构建了 AnalyzerSettings 的派生类，并且将基类作为指针提供给 AnalyzerSettings 的派生类
       mSettings(new SDIOAnalyzerSettings()),
-      mSimulationInitilized(false)
+      mSimulationInitilized(false)          // 初始化变量
 {
-    SetAnalyzerSettings(mSettings.get());
+    SetAnalyzerSettings(mSettings.get());       // 传入Analyzer配置指针给基类
 }
 
 /**
@@ -36,11 +36,10 @@ SDIOAnalyzer::~SDIOAnalyzer()
  */
 void SDIOAnalyzer::SetupResults()
 {
-    // 创建新建 AnalyzerResults 的派生类
+    // 创建新建 AnalyzerResults 的派生类，并将mResults指针指向该对象
     mResults.reset(new SDIOAnalyzerResults(this, mSettings.get()));
 
-    // 需要将其指针提供给基类
-    SetAnalyzerResults(mResults.get());
+    SetAnalyzerResults(mResults.get());     // 传入Analyzer结果指针给基类
 
     // 指定要显示结果的通道，通常只需一个通道（除了 SPI 的例子，MISO 和 MOSI 都需要显示）。
     // 这里只需指定显示信息的通道，而其它（如显示 marker）不应在此指定
@@ -137,17 +136,20 @@ bool SDIOAnalyzer::FrameStateMachine()
     static U64 temp2;
     static char lastHostCmd = -1;
 
+    // 上升沿采样
     if (mSettings->mSampleRead == RISING_EDGE) {
         if (mClock->GetBitState() == BIT_HIGH) {
             mClock->AdvanceToNextEdge();
         }
-    } else {
+    } 
+    // 下降沿采样
+    else {
         if (mClock->GetBitState() == BIT_LOW) {
             mClock->AdvanceToNextEdge();
         }
     }
-    mClock->AdvanceToNextEdge(); //周期跳变
-    U64 smpMid = mClock->GetSampleNumber();
+    mClock->AdvanceToNextEdge(); //周期跳变，移动到下一个采样点
+    U64 smpMid = mClock->GetSampleNumber(); // 获取当前的采样点
 
     mCmd->AdvanceToAbsPosition(smpMid);
     mDAT0->AdvanceToAbsPosition(smpMid);

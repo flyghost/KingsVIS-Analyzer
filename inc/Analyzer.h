@@ -30,11 +30,11 @@ public:
     virtual void SetupResults();
 
     //use, but don't override:
-    void SetAnalyzerSettings(AnalyzerSettings *settings);
+    void SetAnalyzerSettings(AnalyzerSettings *settings);           // 传入Analyzer配置指针
     void KillThread();
     AnalyzerChannelData *GetAnalyzerChannelData(Channel &channel); //don't delete this pointer
     void ReportProgress(U64 sample_number);
-    void SetAnalyzerResults(AnalyzerResults *results);
+    void SetAnalyzerResults(AnalyzerResults *results);              // 传入Analyzer结果指针
     U32 GetSimulationSampleRate();
     U32 GetSampleRate();
     U64 GetTriggerSample();
